@@ -372,7 +372,7 @@ extends Screen {
                 FontRenderer iconFont = FontPresets.materialIcons(20.0f * this.currentScale);
                 String iconText = "\uE8B6";
                 float iconX = searchX + 12.0f * this.currentScale;
-                float iconY = searchY + searchHeight / 2.0f + iconFont.getMetrics().capHeight() / 2.0f - 12.0f * this.currentScale + 10F;
+                float iconY = searchY + searchHeight / 2.0f + iconFont.getMetrics().capHeight() / 2.0f - 12.0f * this.currentScale + (10.0f * this.currentScale);
                 int iconColor = new Color(255, 255, 255, (int)(180.0f * alpha)).getRGB();
                 TextGlow.drawGlowText(iconText, iconX, iconY, iconFont, 0xffdddddd, iconColor, 12.0f * this.currentScale);
                 FontRenderer queryFont = FontPresets.axiformaRegular(16.0f * this.currentScale);
@@ -381,12 +381,12 @@ extends Screen {
                     String placeholder = "search";
                     float placeholderWidth = GlHelper.getStringWidth(placeholder, placeholderFont);
                     float placeholderX = searchX + (searchWidth - placeholderWidth) / 2.0f;
-                    float placeholderY = searchY + searchHeight / 2.0f + placeholderFont.getMetrics().capHeight() / 2.0f - 8.0f * this.currentScale + 5F;
+                    float placeholderY = searchY + searchHeight / 2.0f + placeholderFont.getMetrics().capHeight() / 2.0f - 8.0f * this.currentScale + (5.0f * this.currentScale);
                     TextGlow.drawGlowText(placeholder, placeholderX, placeholderY, placeholderFont, 0xffcccccc,
                             new Color(255, 255, 255, (int)(130.0f * alpha)).getRGB(), 10.0f * this.currentScale);
                 } else {
                     float queryX = searchX + 35.0f * this.currentScale;
-                    float queryY = searchY + searchHeight / 2.0f + queryFont.getMetrics().capHeight() / 2.0f - 9.0f * this.currentScale + 6F;
+                    float queryY = searchY + searchHeight / 2.0f + queryFont.getMetrics().capHeight() / 2.0f - 9.0f * this.currentScale + (6.0f * this.currentScale);
                     int queryColor = new Color(255, 255, 255, (int)(120.0f * alpha)).getRGB();
                     TextGlow.drawGlowText(this.searchQuery, queryX, queryY, queryFont, -1, queryColor, 8.0f * this.currentScale);
                     if (this.searchFocused) {
@@ -449,11 +449,11 @@ extends Screen {
                     int textColor = textAlpha << 24 | 0xFFFFFF;
                     int glowAlpha = (int)(120.0f * toast.alpha * alpha);
                     int glowColor = glowAlpha << 24 | 0xFFFFFF;
-                    TextGlow.drawGlowText(toast.message, toastX, toastY + 6.0f * this.currentScale, toastFont, textColor, glowColor, 8.0f * this.currentScale);
+                    TextGlow.drawGlowText(toast.message, toastX, toastY + 6.0f * this.currentScale, toastFont, textColor, glowColor, 8.0f * scale);
                 }
             });
-        } catch (Exception exception) {
-            // empty catch block
+                } catch (Exception exception) {
+                    // empty catch block
+                }
+            }
         }
-    }
-}

@@ -29,7 +29,7 @@ extends ClientBase {
             float iconFontSize = 24.0f * scale;
             int horizontalOffset = (int)(420.0f * scale);
             int baseX = originX + horizontalOffset;
-            int baseY = originY + verticalOffset - (int)(65.0f * scale);
+            int baseY = originY + verticalOffset - (int)(60.0f * scale);
             Category[] categories = Category.values();
             Renderer.renderConsumer(drawContext -> {
                 FontRenderer iconFont = FontPresets.materialIcons(iconFontSize);
@@ -102,7 +102,7 @@ extends ClientBase {
         int verticalOffset = (int)(80.0f * scale);
         int horizontalOffset = (int)(420.0f * scale);
         int baseX = originX + horizontalOffset;
-        int baseY = originY + verticalOffset - (int)(65.0f * scale);
+        int baseY = originY + verticalOffset - (int)(60.0f * scale);
         Category[] categories = Category.values();
         for (int i = 0; i < categories.length; ++i) {
             Category category = categories[i];
@@ -129,7 +129,7 @@ extends ClientBase {
         int verticalOffset = (int)(80.0f * scale);
         int horizontalOffset = (int)(420.0f * scale);
         int baseX = originX + horizontalOffset;
-        int baseY = originY + verticalOffset - (int)(65.0f * scale);
+        int baseY = originY + verticalOffset - (int)(60.0f * scale);
         Category[] categories = Category.values();
         for (int i = 0; i < categories.length; ++i) {
             int iconX = baseX + i * iconSpacing;
