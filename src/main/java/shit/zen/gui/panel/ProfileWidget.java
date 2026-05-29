@@ -9,7 +9,6 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import shit.zen.ClientBase;
 import shit.zen.ZenClient;
 import shit.zen.gui.panel.SettingsPopup;
-import shit.zen.render.DrawContext;
 import shit.zen.render.FontPresets;
 import shit.zen.render.FontRenderer;
 import shit.zen.render.GlHelper;
@@ -59,19 +58,27 @@ extends ClientBase {
                 FontRenderer nameFont = FontPresets.axiformaRegular(14.0f * scale);
                 int glowColor = new Color(255, 255, 255, (int)(100.0f * alpha)).getRGB();
                 TextGlow.drawGlowText(userId, textX, textY, nameFont, this.applyAlpha(-1, alpha), glowColor, 8.0f * scale);
+
                 float nameWidth = GlHelper.getStringWidth(userId, nameFont);
-                int roleBoxX = (int)((float)textX + nameWidth + 8.0f * scale);
-                int roleBoxY = textY - (int)(6.0f * scale);
-                Color roleColor = this.getRoleColor(userRole);
                 FontRenderer roleFont = FontPresets.axiformaBold(11.0f * scale);
                 float roleStrWidth = GlHelper.getStringWidth(userRole, roleFont);
-                int roleBoxW = (int)(roleStrWidth + 8.0f * scale);
-                int roleBoxH = (int)(10.0f * scale);
+                
+                float roleBoxW = roleStrWidth + 8.0f * scale;
+                float roleBoxH = 12.0f * scale;
+                float roleBoxX = textX + nameWidth + 8.0f * scale;
+
+                float roleBoxY = textY + (nameFont.getMetrics().capHeight() - roleBoxH) / 2.0f;
+                
+                Color roleColor = this.getRoleColor(userRole);
                 int roleShadowColor = new Color(roleColor.getRed(), roleColor.getGreen(), roleColor.getBlue(), (int)(180.0f * alpha)).getRGB();
-                RenderUtil.drawRoundedRect(guiGraphics.pose(), roleBoxX - 3, (float)roleBoxY + 2.5f * scale - 2.0f, roleBoxW + 2, roleBoxH + 2, 5.0f * scale, this.applyAlpha(roleShadowColor, alpha * 0.35f));
-                RenderUtil.drawRoundedRect(guiGraphics.pose(), roleBoxX - 2, (float)roleBoxY + 3.5f * scale - 2.0f, roleBoxW, roleBoxH, 4.0f * scale, this.applyAlpha(roleColor.getRGB(), alpha));
+                
+                RenderUtil.drawRoundedRect(guiGraphics.pose(), roleBoxX - 1.0f * scale, roleBoxY - 1.0f * scale, roleBoxW + 2.0f * scale, roleBoxH + 2.0f * scale, 5.0f * scale, this.applyAlpha(roleShadowColor, alpha * 0.35f));
+                RenderUtil.drawRoundedRect(guiGraphics.pose(), roleBoxX, roleBoxY, roleBoxW, roleBoxH, 4.0f * scale, this.applyAlpha(roleColor.getRGB(), alpha));
+
                 int roleTextGlow = new Color(255, 255, 255, (int)(120.0f * alpha)).getRGB();
-                TextGlow.drawGlowText(userRole, (float)roleBoxX + 1.5f * scale, (float)roleBoxY + 6.5f * scale, roleFont, this.applyAlpha(-1, alpha), roleTextGlow, 5.0f * scale);
+                float roleTextX = roleBoxX + (roleBoxW - roleStrWidth) / 2.0f;
+                float roleTextY = roleBoxY + (roleBoxH - roleFont.getMetrics().capHeight()) / 2.0f + 0.5f * scale;
+                TextGlow.drawGlowText(userRole, roleTextX, roleTextY, roleFont, this.applyAlpha(-1, alpha), roleTextGlow, 5.0f * scale);
             });
             this.settingsPopup.render(guiGraphics, mouseX, mouseY, scale, alpha);
         } catch (Exception exception) {

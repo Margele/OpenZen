@@ -10,7 +10,6 @@ import shit.zen.gui.PanelClickGui;
 import shit.zen.render.FontPresets;
 import shit.zen.render.FontRenderer;
 import shit.zen.render.GlHelper;
-import shit.zen.render.GlyphMetrics;
 import shit.zen.render.TextGlow;
 import shit.zen.settings.Setting;
 import shit.zen.settings.impl.NumberSetting;
@@ -47,7 +46,7 @@ implements SettingRenderer {
         int iconSize = Math.round(16.0f * scale);
         int iconGap = Math.round(4.0f * scale);
         int iconX = widgetX - iconSize - iconGap;
-        int iconY = Math.round(centerY - (float)iconSize / 2.0f) + Math.round(3.0f * scale);
+        int iconY = Math.round(centerY - (float)iconSize / 2.0f);
         this.updateHoverStates(numberSetting, mouseX, mouseY, widgetX, widgetY, widgetWidth, sidePadding, widgetHeight, iconX, iconY, iconSize);
         this.drawNumberWidget(guiGraphics, numberSetting, x, y, width, widgetX, widgetY, widgetWidth, widgetHeight, iconX, iconY, editing, alpha, scale);
         return rowHeight;
@@ -177,30 +176,35 @@ implements SettingRenderer {
         FontRenderer nameFont = FontPresets.axiformaRegular(14.0f * scale);
         FontRenderer valueFont = FontPresets.axiformaBold(14.0f * scale);
         FontRenderer signFont = FontPresets.axiformaBold(12.0f * scale);
-        GlyphMetrics nameMetrics = nameFont.getMetrics();
-        float nameY = centerY - (nameMetrics.ascent() + nameMetrics.descent()) / 2.0f + nameMetrics.ascent() + 6.0f * scale;
+
+        float nameY = centerY - nameFont.getMetrics().capHeight() / 2.0f;
         TextGlow.drawGlowText(numberSetting.getName(), x, nameY, nameFont, this.applyAlpha(-1, alpha), this.applyAlpha(new Color(255, 255, 255, 120).getRGB(), alpha), 8.0f * scale);
         this.drawEditIcon(guiGraphics, iconX, iconY, numberSetting, alpha, scale);
+        
         int sidePadding = Math.round(12.0f * scale);
         RenderUtil.drawRoundedRect(guiGraphics.pose(), widgetX, widgetY, widgetWidth, widgetHeight, 5.0f * scale, this.applyAlpha(0x50F5F5F5, alpha));
         int middleX = widgetX + sidePadding;
         int middleWidth = widgetWidth - sidePadding * 2;
         RenderUtil.drawRoundedRect(guiGraphics.pose(), middleX, widgetY, middleWidth, widgetHeight, 0.0f, this.applyAlpha(1086900424, alpha));
-        GlyphMetrics signMetrics = signFont.getMetrics();
-        float widgetCenterY = (float)widgetY + (float)widgetHeight / 2.0f;
-        float signY = widgetCenterY - (signMetrics.ascent() + signMetrics.descent()) / 2.0f + signMetrics.ascent() + 5.0f * scale - 2.5f;
-        int minusColor = this.minusButtonHover.getOrDefault(numberSetting, false) != false ? new Color(255, 255, 255).getRGB() : -1;
-        GlHelper.drawText("-", (float)widgetX + (float)sidePadding / 2.0f - GlHelper.getStringWidth("-", signFont) / 2.0f, signY, signFont, this.applyAlpha(minusColor, alpha));
-        int plusColor = this.plusButtonHover.getOrDefault(numberSetting, false) != false ? new Color(255, 255, 255).getRGB() : -1;
-        GlHelper.drawText("+", (float)(widgetX + widgetWidth - sidePadding) + ((float)sidePadding / 2.0f - GlHelper.getStringWidth("+", signFont) / 2.0f), signY, signFont, this.applyAlpha(plusColor, alpha));
-        String dup = displayText = editing ? editingText : this.formatValue(numberSetting.getValue().doubleValue());
+        
+        float widgetCenterY = widgetY + widgetHeight / 2.0f;
+        float signY = widgetCenterY - signFont.getMetrics().capHeight() / 2.0f;
+        
+        int minusColor = this.minusButtonHover.getOrDefault(numberSetting, false) ? new Color(255, 255, 255).getRGB() : -1;
+        GlHelper.drawText("-", widgetX + sidePadding / 2.0f - GlHelper.getStringWidth("-", signFont) / 2.0f, signY, signFont, this.applyAlpha(minusColor, alpha));
+        
+        int plusColor = this.plusButtonHover.getOrDefault(numberSetting, false) ? new Color(255, 255, 255).getRGB() : -1;
+        GlHelper.drawText("+", widgetX + widgetWidth - sidePadding + sidePadding / 2.0f - GlHelper.getStringWidth("+", signFont) / 2.0f, signY, signFont, this.applyAlpha(plusColor, alpha));
+        
+        displayText = editing ? editingText : this.formatValue(numberSetting.getValue().doubleValue());
         if (editing && displayText.isEmpty()) {
             displayText = "0";
         }
+        
         float displayWidth = GlHelper.getStringWidth(displayText, valueFont);
-        float displayX = (float)widgetX + (float)widgetWidth / 2.0f - displayWidth / 2.0f;
-        GlyphMetrics valueMetrics = valueFont.getMetrics();
-        float displayY = signY + scale - 1.5f;
+        float displayX = widgetX + widgetWidth / 2.0f - displayWidth / 2.0f;
+        float displayY = widgetCenterY - valueFont.getMetrics().capHeight() / 2.0f;
+        
         if (editing) {
             long now = System.currentTimeMillis();
             float cyclePos = (float)(now % 1000L) / 1000.0f;
@@ -208,12 +212,12 @@ implements SettingRenderer {
             int textAlpha = (int)(255.0f * (0.6f + sineWave * 0.4f) * alpha);
             int textColor = textAlpha << 24 | 0xFFFFFF;
             GlHelper.drawText(displayText, displayX, displayY, valueFont, textColor);
+            
             float caretX = displayX + displayWidth + 2.0f * scale;
             int caretAlpha = (int)(255.0f * sineWave * alpha);
             int caretColor = caretAlpha << 24 | 0xFFFFFF;
-            float caretHeight = valueMetrics.capHeight();
-            float caretY = displayY - valueMetrics.ascent() + (valueMetrics.ascent() - caretHeight) / 2.0f;
-            RenderUtil.drawFilledRect(guiGraphics.pose(), caretX, caretY, Math.round(scale), Math.round(caretHeight), caretColor);
+            float caretHeight = valueFont.getMetrics().capHeight();
+            RenderUtil.drawFilledRect(guiGraphics.pose(), caretX, displayY, Math.max(1.0f, Math.round(scale)), caretHeight, caretColor);
         } else {
             int glowColor = new Color(255, 255, 255, 120).getRGB();
             TextGlow.drawGlowText(displayText, displayX, displayY, valueFont, this.applyAlpha(-1, alpha), this.applyAlpha(glowColor, alpha), 6.0f * scale);
@@ -235,9 +239,10 @@ implements SettingRenderer {
         FontRenderer iconFont = FontPresets.materialIcons(iconSize);
         String iconText = "\uE3C9";
         float iconTextWidth = GlHelper.getStringWidth(iconText, iconFont);
-        GlyphMetrics iconMetrics = iconFont.getMetrics();
-        float drawX = (float)iconX + ((float)iconSize - iconTextWidth) / 2.0f;
-        float drawY = (float)iconY + (float)iconSize / 2.0f - (iconMetrics.ascent() + iconMetrics.descent()) / 2.0f + iconMetrics.ascent() + 1.0f;
+        
+        float drawX = iconX + (iconSize - iconTextWidth) / 2.0f;
+        float drawY = iconY + iconSize / 2.0f - iconFont.getMetrics().capHeight() / 2.0f;
+        
         GlHelper.drawText(iconText, drawX, drawY, iconFont, this.applyAlpha(iconColor, alpha));
     }
 
