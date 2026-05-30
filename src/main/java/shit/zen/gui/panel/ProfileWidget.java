@@ -108,7 +108,7 @@ extends ClientBase {
         } catch (Exception exception) {
             // empty catch block
         }
-        return "User";
+        return "Admin";
     }
 
     public boolean isMouseOverAvatar(int originX, int originY, int mouseX, int mouseY, float scale) {

@@ -108,7 +108,7 @@ extends ClientBase {
         rowY = (int)((float)rowY + 8.0f * scale);
         this.drawDropdown(drawContext, guiGraphics, "Menu Scale", this.selectedScale, SCALES, "scale", popupX, rowY, mouseX, mouseY, this.openAlpha, scale, popupWidth);
         FontRenderer footerFont = FontPresets.axiformaRegular(12.0f * scale);
-        String footer = "7unknown © 2024-2025";
+        String footer = "7unknown \u00a9 2024-2025";
         float footerWidth = GlHelper.getStringWidth(footer, footerFont);
         GlHelper.drawText(footer, (float)popupX + ((float)popupWidth - footerWidth) / 2.0f, (float)(popupY + popupHeight) - 15.0f * scale, footerFont, labelColor);
     }
@@ -132,23 +132,33 @@ extends ClientBase {
         FontRenderer valueFont = FontPresets.axiformaRegular(13.0f * scale);
         int labelColor = this.applyAlpha(new Color(0xAAAAAA).getRGB(), openAlpha);
         int valueColor = this.applyAlpha(new Color(0xFFFFFF).getRGB(), openAlpha);
-        GlHelper.drawText(label, (float)popupX + 15.0f * scale, (float)rowY + 6.0f * scale, labelFont, labelColor);
+        
         int dropdownWidth = (int)(90.0f * scale);
         int dropdownX = (int)((float)(popupX + popupWidth - dropdownWidth) - 15.0f * scale);
         int dropdownHeaderHeight = (int)(20.0f * scale);
         int itemHeight = (int)(18.0f * scale);
+        
+        // --- 核心修复：标签左侧文字基于 CapHeight 垂直居中 ---
+        float labelY = rowY + (dropdownHeaderHeight - labelFont.getMetrics().capHeight()) / 2.0f;
+        GlHelper.drawText(label, (float)popupX + 15.0f * scale, labelY, labelFont, labelColor);
+        
         float openFactor = this.dropdownAlpha.getOrDefault(key, 0.0f).floatValue();
         String[] filteredItems = this.filterDropdownItems(items, selectedValue);
         int expandedHeight = (int)((float)(filteredItems.length * itemHeight) * openFactor);
         RenderUtil.drawRoundedRect(guiGraphics.pose(), dropdownX, rowY, dropdownWidth, dropdownHeaderHeight + expandedHeight, 4.0f * scale, this.applyAlpha(POPUP_BG_COLOR.getRGB(), openAlpha));
+        
+        // --- 核心修复：选择框内部文字基于 CapHeight 垂直居中（抛弃无脑的常量加减偏移） ---
         float valueX = (float)dropdownX + 8.0f * scale;
-        float valueY = (float)rowY + (float)dropdownHeaderHeight / 2.0f - valueFont.getMetrics().capHeight() / 2.0f + 3.0f * scale;
-        GlHelper.drawText(selectedValue, valueX, valueY - 2.0f, valueFont, valueColor);
+        float valueY = rowY + (dropdownHeaderHeight - valueFont.getMetrics().capHeight()) / 2.0f;
+        GlHelper.drawText(selectedValue, valueX, valueY, valueFont, valueColor);
+        
+        // --- 核心修复：展开的小箭头基于 CapHeight 垂直居中（抛弃 +7.0f 的不缩放硬编码偏移） ---
         FontRenderer arrowFont = FontPresets.materialIcons(18.0f * scale);
         String arrowIcon = "";
         float arrowX = (float)(dropdownX + dropdownWidth) - 18.0f * scale;
-        float arrowY = (float)rowY + (float)dropdownHeaderHeight / 2.0f + arrowFont.getMetrics().capHeight() / 2.0f - 10.5f * scale + 7.0f;
+        float arrowY = rowY + (dropdownHeaderHeight - arrowFont.getMetrics().capHeight()) / 2.0f;
         GlHelper.drawText(arrowIcon, arrowX, arrowY, arrowFont, valueColor);
+        
         if (openFactor > 0.01f) {
             drawContext.save();
             drawContext.clip(Rectangle.ofXYWH(dropdownX, rowY + dropdownHeaderHeight, dropdownWidth, expandedHeight));
@@ -159,7 +169,8 @@ extends ClientBase {
                 this.updateItemHover(itemHovers, item, hovered);
                 float hoverAmount = itemHovers.getOrDefault(item, 0.0f);
                 float itemTextX = (float)dropdownX + 8.0f * scale;
-                float itemTextY = (float)itemY + (float)itemHeight / 2.0f - valueFont.getMetrics().capHeight() / 2.0f + 3.0f * scale;
+                // --- 核心修复：展开列表里的每一项文字也基于 CapHeight 完美居中 ---
+                float itemTextY = itemY + (itemHeight - valueFont.getMetrics().capHeight()) / 2.0f;
                 int itemColor = this.applyAlpha(valueColor, openFactor);
                 float glowAmount = hoverAmount * openFactor;
                 if (glowAmount > 0.01f) {
@@ -180,7 +191,18 @@ extends ClientBase {
     }
 
     private String getUserRole() {
-        return "User";
+        try {
+            if (false) {
+                List<String> roles = new ArrayList<>();
+                if (roles.contains("ROLE_OWNER")) return "Premium";
+                if (roles.contains("ROLE_ADMIN")) return "Admin";
+                if (roles.contains("ROLE_BETA")) return "Beta";
+                return roles.get(0).replace("ROLE_", "");
+            }
+        } catch (Exception exception) {
+            // empty catch block
+        }
+        return "Admin";
     }
 
     public boolean onMouseClick(int mouseX, int mouseY, float scale) {
