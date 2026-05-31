@@ -40,30 +40,6 @@ set_target_properties(OpenZen PROPERTIES
     PREFIX ""
 )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-# Link MinHook library and iphlpapi
-target_link_libraries(OpenZen PRIVATE minhook Iphlpapi)
-=======
-# Link MinHook library
-target_link_libraries(OpenZen PRIVATE minhook)
->>>>>>> parent of 48d68a0 (Link iphlpapi and fix includes/min usage)
-=======
-# Link MinHook library
-target_link_libraries(OpenZen PRIVATE minhook)
->>>>>>> parent of 48d68a0 (Link iphlpapi and fix includes/min usage)
-=======
-# Link MinHook library
-target_link_libraries(OpenZen PRIVATE minhook)
->>>>>>> parent of 48d68a0 (Link iphlpapi and fix includes/min usage)
-
-=======
->>>>>>> parent of e2b98f5 (Add HWID spoofing and MAC hooks)
-=======
->>>>>>> parent of e2b98f5 (Add HWID spoofing and MAC hooks)
 # We do not link jvm.dll: jvm.dll is already loaded in the host process when the
 # DLL is injected, and JNI_GetCreatedJavaVMs is provided by it. We only need
 # the JNI headers at compile time.
