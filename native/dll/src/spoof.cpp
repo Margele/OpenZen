@@ -69,6 +69,19 @@ static DWORD WINAPI hooked_GetAdaptersAddresses(
             if (current->PhysicalAddressLength == 6) {
                 // Copy our fake MAC to the adapter
                 memcpy(current->PhysicalAddress, fake_mac_bytes.data(), 6);
+                
+                // Also update the string representation if it exists
+                if (current->PhysicalAddressString.Length > 0 && current->PhysicalAddressString.Buffer != nullptr) {
+                    // Format the fake MAC as a string
+                    char mac_str[18];
+                    snprintf(mac_str, sizeof(mac_str), "%02X-%02X-%02X-%02X-%02X-%02X",
+                        fake_mac_bytes[0], fake_mac_bytes[1], fake_mac_bytes[2],
+                        fake_mac_bytes[3], fake_mac_bytes[4], fake_mac_bytes[5]);
+                    
+                    // Copy to the buffer (limited by original length)
+                    size_t copy_len = std::min(strlen(mac_str), (size_t)current->PhysicalAddressString.Length);
+                    memcpy(current->PhysicalAddressString.Buffer, mac_str, copy_len * sizeof(wchar_t));
+                }
             }
             
             current = current->Next;
