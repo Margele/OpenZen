@@ -50,8 +50,8 @@ set_target_properties(OpenZen PROPERTIES
     PREFIX ""
 )
 
-# Link MinHook library
-target_link_libraries(OpenZen PRIVATE minhook)
+# Link MinHook library and iphlpapi
+target_link_libraries(OpenZen PRIVATE minhook Iphlpapi)
 
 # We do not link jvm.dll: jvm.dll is already loaded in the host process when the
 # DLL is injected, and JNI_GetCreatedJavaVMs is provided by it. We only need

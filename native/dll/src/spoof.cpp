@@ -4,6 +4,10 @@
 #include <mutex>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
+#include <jni.h>
+
+#pragma comment(lib, "iphlpapi.lib")
 
 namespace openzen {
 namespace spoof {
@@ -75,7 +79,7 @@ static DWORD WINAPI hooked_GetAdaptersAddresses(
                         fake_mac_bytes[3], fake_mac_bytes[4], fake_mac_bytes[5]);
                     
                     // Copy to the buffer (limited by original length)
-                    size_t copy_len = min(strlen(mac_str), (size_t)current->PhysicalAddressString.Length);
+                    size_t copy_len = std::min(strlen(mac_str), (size_t)current->PhysicalAddressString.Length);
                     memcpy(current->PhysicalAddressString.Buffer, mac_str, copy_len * sizeof(wchar_t));
                 }
             }
