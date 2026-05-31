@@ -45,7 +45,6 @@ import shit.zen.patch.PlayerPatch;
 import shit.zen.patch.PlayerTabOverlayPatch;
 import shit.zen.asm.Bootstrap;
 import shit.zen.utils.rotation.RotationHandler;
-import com.heypixel.heypixelmod.obsoverlay.protocol.HeypixelEventHandler;
 
 @Mod(value = "hey")
 @Getter
@@ -106,10 +105,6 @@ public class ZenClient extends ClientBase {
             this.eventBus.register(new IntroAnimation());
             Bootstrap.init();
             registerPatches();
-            
-            // Initialize HWID Spoof event handler
-            HeypixelEventHandler.INSTANCE.init();
-
             if (PatchAgent.getInstrumentation() != null) {
                 PatchAgent.installPatchesAndRetransform();
             } else {

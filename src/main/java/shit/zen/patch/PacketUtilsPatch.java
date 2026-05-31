@@ -24,15 +24,6 @@ public class PacketUtilsPatch {
     )
     public static <T extends PacketListener> void onEnsureRunningOnSameThread(Packet<T> packet, T listener, BlockableEventLoop<?> loop, CallbackInfo callbackInfo) throws RunningOnDifferentThreadException {
         if (ZenClient.isReady()) {
-            // Bypass vanilla filter injection / forge network pipeline packets that cause duplicate handler exception
-            // We should let ClientboundLoginPacket and Dimension/Respawn packets pass through normally to Forge
-            String packetName = packet.getClass().getSimpleName();
-            if (packetName.equals("ClientboundLoginPacket") || 
-                packetName.equals("ClientboundRespawnPacket") || 
-                packetName.equals("ClientboundChangeDifficultyPacket")) {
-                return; // Let the original method handle these packets synchronously
-            }
-            
             callbackInfo.cancel();
             PacketHandlerUtil.processPacket(LOGGER, packet, listener, loop);
         }

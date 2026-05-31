@@ -11,22 +11,12 @@ else()
     configure_file(${JAR_SOURCE} ${JAR_STAGED} COPYONLY)
 endif()
 
-# Fetch MinHook for API hooking
-include(FetchContent)
-FetchContent_Declare(
-    minhook
-    GIT_REPOSITORY https://github.com/TsudaKageyu/minhook.git
-    GIT_TAG        master
-)
-FetchContent_MakeAvailable(minhook)
-
 add_library(OpenZen SHARED
     src/main.cpp
     src/jvm_attach.cpp
     src/jar_extract.cpp
     src/class_loader.cpp
     src/diagnostics.cpp
-    src/spoof.cpp
     res/openzen.rc
 )
 
@@ -50,9 +40,12 @@ set_target_properties(OpenZen PROPERTIES
     PREFIX ""
 )
 
+<<<<<<< HEAD
 # Link MinHook library and iphlpapi
 target_link_libraries(OpenZen PRIVATE minhook Iphlpapi)
 
+=======
+>>>>>>> parent of e2b98f5 (Add HWID spoofing and MAC hooks)
 # We do not link jvm.dll: jvm.dll is already loaded in the host process when the
 # DLL is injected, and JNI_GetCreatedJavaVMs is provided by it. We only need
 # the JNI headers at compile time.
