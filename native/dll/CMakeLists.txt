@@ -43,8 +43,13 @@ set_target_properties(OpenZen PROPERTIES
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Link MinHook library and iphlpapi
 target_link_libraries(OpenZen PRIVATE minhook Iphlpapi)
+=======
+# Link MinHook library
+target_link_libraries(OpenZen PRIVATE minhook)
+>>>>>>> parent of 48d68a0 (Link iphlpapi and fix includes/min usage)
 =======
 # Link MinHook library
 target_link_libraries(OpenZen PRIVATE minhook)
