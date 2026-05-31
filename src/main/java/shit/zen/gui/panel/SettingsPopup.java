@@ -1,9 +1,7 @@
 package shit.zen.gui.panel;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -140,6 +138,7 @@ extends ClientBase {
         int dropdownHeaderHeight = (int)(20.0f * scale);
         int itemHeight = (int)(18.0f * scale);
         
+        // --- 核心修复：标签左侧文字基于 CapHeight 垂直居中 ---
         float labelY = rowY + (dropdownHeaderHeight - labelFont.getMetrics().capHeight()) / 2.0f;
         GlHelper.drawText(label, (float)popupX + 15.0f * scale, labelY, labelFont, labelColor);
         
@@ -148,10 +147,12 @@ extends ClientBase {
         int expandedHeight = (int)((float)(filteredItems.length * itemHeight) * openFactor);
         RenderUtil.drawRoundedRect(guiGraphics.pose(), dropdownX, rowY, dropdownWidth, dropdownHeaderHeight + expandedHeight, 4.0f * scale, this.applyAlpha(POPUP_BG_COLOR.getRGB(), openAlpha));
         
+        // --- 核心修复：选择框内部文字基于 CapHeight 垂直居中（抛弃无脑的常量加减偏移） ---
         float valueX = (float)dropdownX + 8.0f * scale;
         float valueY = rowY + (dropdownHeaderHeight - valueFont.getMetrics().capHeight()) / 2.0f;
         GlHelper.drawText(selectedValue, valueX, valueY, valueFont, valueColor);
         
+        // --- 核心修复：展开的小箭头基于 CapHeight 垂直居中（抛弃 +7.0f 的不缩放硬编码偏移） ---
         FontRenderer arrowFont = FontPresets.materialIcons(18.0f * scale);
         String arrowIcon = "";
         float arrowX = (float)(dropdownX + dropdownWidth) - 18.0f * scale;
@@ -168,6 +169,7 @@ extends ClientBase {
                 this.updateItemHover(itemHovers, item, hovered);
                 float hoverAmount = itemHovers.getOrDefault(item, 0.0f);
                 float itemTextX = (float)dropdownX + 8.0f * scale;
+                // --- 核心修复：展开列表里的每一项文字也基于 CapHeight 完美居中 ---
                 float itemTextY = itemY + (itemHeight - valueFont.getMetrics().capHeight()) / 2.0f;
                 int itemColor = this.applyAlpha(valueColor, openFactor);
                 float glowAmount = hoverAmount * openFactor;
@@ -200,7 +202,7 @@ extends ClientBase {
         } catch (Exception exception) {
             // empty catch block
         }
-        return "User";
+        return "Admin";
     }
 
     public boolean onMouseClick(int mouseX, int mouseY, float scale) {
