@@ -1,4 +1,5 @@
 #include "openzen.h"
+#include "spoof.h"
 
 #include <atomic>
 
