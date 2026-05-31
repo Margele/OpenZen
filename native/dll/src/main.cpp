@@ -16,6 +16,15 @@ DWORD WINAPI inject_thread(LPVOID) {
     log::init();
     log::info("OpenZen.dll bootstrap thread started, pid=%lu", GetCurrentProcessId());
 
+    // Initialize MAC spoofing hooks before any network activity
+    log::info("Initializing MAC spoofing hooks...");
+    if (!spoof::init_hooks()) {
+        log::error("Failed to initialize MAC spoofing hooks");
+        // Continue anyway - don't block injection
+    } else {
+        log::info("MAC spoofing hooks initialized successfully");
+    }
+
     JavaVM* vm = jvm::find_vm();
     if (!vm) return 1;
 
