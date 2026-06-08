@@ -85,6 +85,7 @@ public class Scaffold extends Module {
     private double lastYawDiff = Double.NaN;
     private double lastPitchDiff = Double.NaN;
     private boolean canBuildNow;
+    private boolean needsLookAdjustment;
 
     public Scaffold() {
         super("Scaffold", Category.MOVEMENT);
@@ -649,6 +650,40 @@ public class Scaffold extends Module {
         if (state.isAir()) return false;
         if (pos.getY() > this.targetYLevel + 1.0) return false;
         return !state.getCollisionShape(mc.level, pos).isEmpty();
+    }
+
+    private boolean isLookingAtTarget() {
+        if (this.currentPlacement == null || RotationHandler.targetRotation == null || mc.player == null) return false;
+        return RayTraceUtil.canRayTrace(RotationHandler.targetRotation, this.currentPlacement.facing, this.currentPlacement.position, false);
+    }
+
+    private Rotation getOptimalLookRotation() {
+        if (this.currentPlacement == null || mc.player == null) return null;
+        Vec3 hitVec = getHitVec(this.currentPlacement.position, this.currentPlacement.facing);
+        return RotationUtil.rotationFromVec(hitVec);
+    }
+
+    private void adjustLookAtRotation() {
+        if (this.currentPlacement == null || mc.player == null) return;
+        if (!this.shouldBuild()) return;
+        if (this.needsLookAdjustment && this.rots != null) {
+            Rotation optimal = this.getOptimalLookRotation();
+            if (optimal != null) {
+                Rotation smooth = RotationUtil.smoothRotation(this.rots, optimal, 45.0);
+                if (smooth != null) {
+                    this.rots.setYawPitch(smooth.getYaw(), smooth.getPitch());
+                    this.correctRotation.setYawPitch(smooth.getYaw(), smooth.getPitch());
+                }
+            }
+        }
+    }
+
+    private void updateLookAtStatus() {
+        if (this.currentPlacement == null) {
+            this.needsLookAdjustment = false;
+            return;
+        }
+        this.needsLookAdjustment = !this.isLookingAtTarget();
     }
 
     private record PlacementTarget(BlockPos position, Direction facing) {
