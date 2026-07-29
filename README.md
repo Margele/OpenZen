@@ -10,6 +10,9 @@
 
 > ⚠️ 本仓库**仅供学习与研究目的发布** —— 用于研究客户端侧游戏改造、ASM 字节码补丁和混淆/反混淆技术。在你不拥有的服务器上使用作弊客户端违反绝大多数服务器规则，请自行承担后果。
 
+## 精神马来西亚人穿女装黑丝跳舞视频
+![bruh](./img/cf03f08c6d349b53b29c0f5d97a69cca.png)
+
 ## 精神马来西亚人最新力作
 [点我跳转](https://docs.google.com/spreadsheets/d/1KZotYDgOnj8QKRSoSIT9otVLlcJ-wfVdFIF4R00Rrc8)
 
