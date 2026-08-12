@@ -33,7 +33,7 @@ extends Module {
     }
 
     public static String replacePlayerName(String string) {
-        if (INSTANCE == null) {
+        if (INSTANCE == null || !INSTANCE.isEnabled()) {
             return string;
         }
         if (mc.player == null) {
@@ -49,7 +49,10 @@ extends Module {
 
     public static String getProtectedName() {
         if (mc.player == null) {
-            return mc.player != null ? mc.player.getName().getString() : "Player";
+            return "Player";
+        }
+        if (INSTANCE == null || !INSTANCE.isEnabled()) {
+            return mc.player.getName().getString();
         }
         String string = mc.player.getName().getString();
         String string2 = INSTANCE.generateRandomName();
